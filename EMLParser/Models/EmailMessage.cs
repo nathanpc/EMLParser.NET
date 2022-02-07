@@ -41,6 +41,18 @@ namespace EMLParser.Models {
 			while ((header = ParseHeader(reader)) != null) {
 				// Add the parsed header to the headers list.
 				Headers.Add(header);
+
+				// Check if we have a Content-Type header.
+				if (header.Name == "Content-Type") {
+					// Check if we actually have a type of content we can parse.
+					if (header.Fields == null) {
+						throw new Exception("Currently we only support " +
+							"'multipart/alternative' EML files");
+					}
+
+					// Get the boundary string.
+					boundary = header.Fields["boundary"];
+				}
 			}
 
 			// Read the empty line after the headers.

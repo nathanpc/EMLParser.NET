@@ -17,6 +17,8 @@ namespace EMLParser.Models {
 		/// </summary>
 		public EmailHeader() {
 			valueChanged = false;
+			Name = "";
+			_value = "";
 			Fields = null;
 		}
 
@@ -38,12 +40,13 @@ namespace EMLParser.Models {
 		/// and value.</param>
 		public EmailHeader(string[] header) : this() {
 			// Check if the string array has the right length.
-			if (header.Length != 2)
-				throw new Exception("Header string array must only have 2 items");
+			if (header.Length > 2)
+				throw new Exception("Header string array must have up to 2 items");
 
 			// Populate the object.
 			Name = header[0];
-			Value = header[1];
+			if (header.Length == 2)
+				Value = header[1];
 		}
 
 		/// <summary>
@@ -113,6 +116,10 @@ namespace EMLParser.Models {
 
 			// Reset the value variable changed flag.
 			valueChanged = false;
+		}
+
+		public override string ToString() {
+			return Name + ": " + Value;
 		}
 
 		/// <summary>

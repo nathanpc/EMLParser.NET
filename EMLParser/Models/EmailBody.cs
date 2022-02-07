@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace EMLParser.Models {
 	/// <summary>
@@ -10,6 +11,7 @@ namespace EMLParser.Models {
 		private List<EmailHeader> _headers;
 		private string _contents;
 		private string _contentType;
+		private string _transferEncoding;
 
 		/// <summary>
 		/// Creates an empty email body object.
@@ -19,6 +21,7 @@ namespace EMLParser.Models {
 			Headers = new List<EmailHeader>();
 			Contents = "";
 			ContentType = null;
+			TransferEncoding = null;
 		}
 
 		/// <summary>
@@ -67,6 +70,55 @@ namespace EMLParser.Models {
 			}
 		}
 
+		/// <summary>
+		/// Gets the transfer encoding scheme and puts it into the TransferEncoding
+		/// property.
+		/// </summary>
+		protected void GetTransferEncoding() {
+			// Do nothing if the TransferEncoding property has already been set.
+			if (_transferEncoding != null)
+				return;
+
+			// Go through the headers looking for the Content-Transfer-Encoding.
+			foreach (EmailHeader header in Headers) {
+				// Is this it?
+				if (header.Name != "Content-Transfer-Encoding")
+					continue;
+
+				// Get the scheme name.
+				TransferEncoding = header.Value;
+				return;
+			}
+		}
+
+		/// <summary>
+		/// Cleans up the contents of a body string.
+		/// </summary>
+		/// <param name="contents">Body contents to unescape.</param>
+		/// <returns>Unescaped and clean body contents.</returns>
+		protected string UnescapeBody(string contents) {
+			string unescaped;
+
+			// Do nothing if the transfer encoding scheme wasn't set.
+			if (TransferEncoding == null)
+				return contents;
+			
+			// Do we even need to do anything?
+			if (!String.Equals(TransferEncoding, "Quoted-Printable",
+					StringComparison.OrdinalIgnoreCase)) {
+				return contents;
+			}
+
+			// Remove all of the escaped line endings.
+			unescaped = contents.Replace("=" + Environment.NewLine, "");
+
+			// TODO: Actually parse the escape characters.
+			// Ignore all escaped characters.
+			unescaped = Regex.Replace(unescaped, @"=[A-F0-9]{2}", "");
+
+			return unescaped;
+		}
+
 		public override string ToString() {
 			return Contents;
 		}
@@ -84,7 +136,7 @@ namespace EMLParser.Models {
 		/// </summary>
 		public string Contents {
 			get { return _contents; }
-			set { _contents = value; }
+			set { _contents = UnescapeBody(value); }
 		}
 
 		/// <summary>
@@ -93,6 +145,14 @@ namespace EMLParser.Models {
 		public string ContentType {
 			get { GetContentType(); return _contentType; }
 			set { _contentType = value; }
+		}
+
+		/// <summary>
+		/// Transfer encoding scheme used in the body.
+		/// </summary>
+		protected string TransferEncoding {
+			get { GetTransferEncoding(); return _transferEncoding; }
+			set { _transferEncoding = value; }
 		}
 	}
 }

@@ -31,7 +31,17 @@ namespace EMLExample {
 			// Print the parsed headers.
 			Console.WriteLine("=============== BEGIN HEADERS ===============");
 			foreach (EmailHeader header in msg.Headers) {
-				Console.WriteLine("[ '{0}', '{1}' ]", header.Name, header.Value);
+				// Print the header.
+				Console.WriteLine("'{0}' = '{1}'", header.Name, header.Value);
+				if (header.Fields == null)
+					continue;
+
+				// Print the header fields.
+				Console.WriteLine("{");
+				foreach (KeyValuePair<string, string> field in header.Fields) {
+					Console.WriteLine("    '{0}' = '{1}'", field.Key, field.Value);
+				}
+				Console.WriteLine("}");
 			}
 			Console.WriteLine("=============== END HEADERS ===============");
 

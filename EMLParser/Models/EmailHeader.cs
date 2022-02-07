@@ -9,11 +9,15 @@ namespace EMLParser.Models {
 	public class EmailHeader {
 		private string _name;
 		private string _value;
+		private bool valueChanged;
+		private Dictionary<string, string> _fields;
 
 		/// <summary>
 		/// Creates an empty email header object.
 		/// </summary>
 		public EmailHeader() {
+			valueChanged = false;
+			Fields = null;
 		}
 
 		/// <summary>
@@ -58,6 +62,60 @@ namespace EMLParser.Models {
 		}
 
 		/// <summary>
+		/// Builds up the fields dictionary if needed.
+		/// </summary>
+		protected void BuildFields() {
+			// Build the fields only if the value variable has changed.
+			if (!valueChanged)
+				return;
+
+			// Clean things up.
+			if (_fields == null) {
+				_fields = new Dictionary<string, string>();
+			} else {
+				_fields.Clear();
+			}
+
+			// Check if we even have fields to parse.
+			if (!Value.Contains("=")) {
+				_fields = null;
+				return;
+			}
+
+			// Split the fields up.
+			string[] fields = Value.Split(new char[] { ' ', ';' },
+				StringSplitOptions.RemoveEmptyEntries);
+			if (fields.Length == 1) {
+				_fields = null;
+				return;
+			}
+
+			// Go through fields parsing them.
+			foreach (string strField in fields) {
+				// Split the field.
+				string[] field = strField.Split(new char[] { '=' },
+					2, StringSplitOptions.RemoveEmptyEntries);
+
+				// Check if we have a field that's not a pair.
+				if (field.Length == 1) {
+					_fields.Add(field[0], null);
+					continue;
+				}
+
+				// TODO: Properly parse strings.
+				// Check if we have a string for the value of a field.
+				if (field[1][0] == '"')
+					field[1] = field[1].Replace("\"", String.Empty);
+
+				// Add a new field.
+				_fields.Add(field[0], field[1]);
+			}
+
+			// Reset the value variable changed flag.
+			valueChanged = false;
+		}
+
+		/// <summary>
 		/// Header name.
 		/// </summary>
 		public string Name {
@@ -70,7 +128,18 @@ namespace EMLParser.Models {
 		/// </summary>
 		public string Value {
 			get { return _value; }
-			set { _value = value; }
+			set {
+				valueChanged = true;
+				_value = value;
+			}
+		}
+
+		/// <summary>
+		/// Header value fields.
+		/// </summary>
+		public Dictionary<string, string> Fields {
+			get { BuildFields(); return _fields; }
+			protected set { _fields = value; }
 		}
 	}
 }

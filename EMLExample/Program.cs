@@ -30,8 +30,8 @@ namespace EMLExample {
 
 			// Print the parsed headers.
 			Console.WriteLine("=============== BEGIN HEADERS ===============");
-			foreach (KeyValuePair<string, string> header in msg.Headers) {
-				Console.WriteLine("[ '{0}', '{1}' ]", header.Key, header.Value);
+			foreach (EmailHeader header in msg.Headers) {
+				Console.WriteLine("[ '{0}', '{1}' ]", header.Name, header.Value);
 			}
 			Console.WriteLine("=============== END HEADERS ===============");
 

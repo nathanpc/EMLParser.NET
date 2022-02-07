@@ -9,7 +9,7 @@ namespace EMLParser.Models {
 	/// </summary>
 	public class EmailMessage {
 		protected string boundary = "";
-		private List<KeyValuePair<string, string>> _headers;
+		private List<EmailHeader> _headers;
 		private List<EmailBody> _bodies;
 
 		/// <summary>
@@ -17,7 +17,7 @@ namespace EMLParser.Models {
 		/// </summary>
 		public EmailMessage() {
 			// Initializes some of our internal variables.
-			Headers = new List<KeyValuePair<string, string>>();
+			Headers = new List<EmailHeader>();
 		}
 
 		/// <summary>
@@ -28,15 +28,25 @@ namespace EMLParser.Models {
 			ParseEML(emlFileContents);
 		}
 
+		/// <summary>
+		/// Actually parses the EML file contents and populates this object.
+		/// </summary>
+		/// <param name="eml">EML file contents.</param>
 		protected void ParseEML(string eml) {
 			StringReader reader = new StringReader(eml);
-			string[] header;
+			EmailHeader header;
+			string line;
 
 			// Parse the headers first.
 			while ((header = ParseHeader(reader)) != null) {
 				// Add the parsed header to the headers list.
-				Headers.Add(new KeyValuePair<string, string>(header[0], header[1]));
+				Headers.Add(header);
 			}
+
+			// Read the empty line after the headers.
+			line = reader.ReadLine();
+			if (line.Length > 0)
+				throw new Exception("Header-Body separator line has contents");
 
 			// TODO: Check for a boundary before parsing the bodies.
 		}
@@ -48,9 +58,9 @@ namespace EMLParser.Models {
 		/// <returns>Parsed header as a <c>string[]</c> where item 0 is the name
 		/// of the header and item 1 is its value. Will return <c>null</c> if it
 		/// has finished parsing the headers.</returns>
-		private string[] ParseHeader(StringReader reader) {
+		private EmailHeader ParseHeader(StringReader reader) {
 			string line;
-			string[] header = new string[2];
+			EmailHeader header;
 
 			// Get the next line and check if we haven't finished parsing headers.
 			line = reader.ReadLine();
@@ -58,8 +68,9 @@ namespace EMLParser.Models {
 				return null;
 
 			// Separate the name and value fields.
-			header = line.Split(new char[] { ':' }, 2, StringSplitOptions.RemoveEmptyEntries);
-			header[1] = header[1].Trim();
+			header = new EmailHeader(
+				line.Split(new char[] { ':' }, 2, StringSplitOptions.RemoveEmptyEntries));
+			header.Value = header.Value.Trim();
 
 			// Check if this header continues down the line.
 			if (!IsNextCharWhitespace(reader))
@@ -67,12 +78,8 @@ namespace EMLParser.Models {
 
 			// Parse the multi-line part of this header value.
 			while ((line = reader.ReadLine()) != null) {
-				// Append a space to the value in case it ended with a semi-colon.
-				if (header[1][header[1].Length - 1] == ';')
-					header[1] += " ";
-
-				// Append more to the value.
-				header[1] += line.Trim();
+				// Append the value to the existing header value.
+				header.AppendValue(line);
 
 				// Check if we've finished parsing the multi-line header.
 				if (!IsNextCharWhitespace(reader))
@@ -97,7 +104,7 @@ namespace EMLParser.Models {
 		/// <summary>
 		/// Message headers.
 		/// </summary>
-		public List<KeyValuePair<string, string>> Headers {
+		public List<EmailHeader> Headers {
 			get { return _headers; }
 			set { _headers = value; }
 		}

@@ -58,9 +58,8 @@ namespace EMLParser.Models {
 			}
 
 			// Read the empty line after the headers.
-			line = reader.ReadLine();
-			if (line.Length > 0)
-				throw new Exception("Header/Body separator line has contents");
+			if (IsNextCharWhitespace(reader))
+				line = reader.ReadLine();
 
 			// Parse the bodies of the message.
 			while ((body = ParseBody(reader)) != null) {
@@ -137,9 +136,8 @@ namespace EMLParser.Models {
 				body.Headers.Add(header);
 
 			// Read the empty line after the headers.
-			line = reader.ReadLine();
-			if (line.Length > 0)
-				throw new Exception("Body header/body separator line has contents");
+			if (IsNextCharWhitespace(reader))
+				line = reader.ReadLine();
 
 			// Go through the lines until we reach the boundary.
 			while ((line = reader.ReadLine()) != boundary) {

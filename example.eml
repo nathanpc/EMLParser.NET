@@ -1,0 +1,161 @@
+Delivered-To: test@example.com
+Received: by 2002:a50:7205:0:0:0:0:0 with SMTP id cc5cst1301847ecb;
+        Fri, 17 Dec 2021 00:31:34 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJw3Jyhe5YdTfzdMHszqDKyDm6kvIOOrYZLQV6QFMOTEST5M6FM8pOWNbOtMBLWEYd/WJeGa
+X-Received: by 2002:a05:620a:2a02:: with SMTP id o2mr1011860qkp.549.1639729894317;
+        Fri, 17 Dec 2021 00:31:34 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1639729894; cv=none;
+        d=google.com; s=arc-20160816;
+        b=FZC3vvNgbXn1RO9t8D/v3Xx+7Au1Al5z24hiV8ZeU6+JnQePjqp5MpWvQ3gBZqEG67
+         viqcLMovVi7lTCXk7QnHUEOWVKnPvPWbvlUuWPyboa16/VMXJ0dzqp2lzhI7Y4F/xMAs
+         JhK7+Alw+OagdwnZ9Wa5Xfyl7q+Drjb/mbvAQWrzh15kEdSJn0xkqqyWi9dh+hCqTclO
+         Ykrim3xC6qiCUPI4RLRT3IrT/mWtydbFo9jLX8M9mTESTwWrjYo35yoewFC5aDtjO7oE
+         xB2EkXS7cOrJrRFTZoVoyxPXgye/Bl4mRld+Q0wJEXxUmH19nRgoz5KkIuNCMIEFtf0b
+         lesA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-post:list-archive:list-id:precedence
+         :content-transfer-encoding:mime-version:subject:message-id:cc:to
+         :reply-to:from:date:dkim-signature;
+        bh=CpQfhLifY7jDUhiB4A6Vs/i3l01jyIA5saZEur4gGqo=;
+        b=LvcdS1fPZQNCZ0s/+eJP2xlyVTHWO38UNBNCevcTRFwr3S8mwRDrRyTMTSRQjN1txA
+         8sI27CmNt0t8P/CAcmCnVXi2SLSb4Jfcqyg3E0rQ1BarTEST4VdYM5wQZ9Lcl5rE97Sr
+         c+JW0TM7nyQzRPnRMBAZ3KVZmZ7Mba34Kb+xWxnr0Qq+ZHG2r0iQKLQgZQ1Bezk1Hvdw
+         i5sReCO6X0iZd1NcqhKKISkmp9JGmApn78NsNdiJaWV623+Ynh6s/loq57eooE6MV/mE
+         FPeWfdwDAoD5KGjQloSPocu+Ax1aJLYSRB1D9cmCldDjeGkZwq8hNpn1B78U++VQS4R1
+         xI0Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@github.com header.s=pf2014 header.b=MAKJ+8Uz;
+       spf=pass (google.com: domain of noreply@github.com designates 192.30.252.201 as permitted sender) smtp.mailfrom=noreply@github.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=github.com
+Return-Path: <noreply@github.com>
+Received: from smtp.github.com (out-18.smtp.github.com. [192.30.252.201])
+        by mx.google.com with ESMTPS id n8si3420939qkw.331.2021.12.17.00.31.33
+        for <test@example.com>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 17 Dec 2021 00:31:34 -0800 (PST)
+Received-SPF: pass (google.com: domain of noreply@github.com designates 192.30.252.201 as permitted sender) client-ip=192.30.252.201;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@github.com header.s=pf2014 header.b=MAKJ+8Uy;
+       spf=pass (google.com: domain of noreply@github.com designates 192.30.252.201 as permitted sender) smtp.mailfrom=noreply@github.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=github.com
+Received: from github-lowworker-b089360.ash1-iad.github.net (github-lowworker-b089360.ash1-iad.github.net [10.56.122.71])
+	by smtp.github.com (Postfix) with ESMTP id D111A340849
+	for <test@example.com>; Fri, 17 Dec 2021 00:31:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=github.com;
+	s=pf2014; t=1639739893;
+	bh=CpQfhLifY7jDThiB4A6Vs/i3201jyIA5saZEur4gGqo=;
+	h=Date:From:Reply-To:To:Cc:Subject:List-ID:List-Archive:List-Post:
+	 List-Unsubscribe:From;
+	b=MAKJ+8UzZC5IKS1eLKNlI4cD32AkIj0fUJG0vmlZQ3TwJMsjTmAZ0N9XM4KBzRoOu
+	 OFWrtWvH7RlE0etTVpreKtrTE3fZCwAdNGrcaSIFnMfN8pw9vzxRzPJFWDHm0nRuH8
+	 khiBG6fONOTS+JnKGZsKw3UD9QLBZooS0meq0u8w=
+Date: Fri, 17 Dec 2021 00:31:33 -0800
+From: gituser789 <notifications@github.com>
+Reply-To: kitspace/awesome-electronics <reply+AAGEWHAHACPER7AITCELUWTTESTOLANCNFSM5KIIPXRQ@reply.github.com>
+To: kitspace/awesome-electronics <awesome-electronics@noreply.github.com>
+Cc: Subscribed <subscribed@noreply.github.com>
+Message-ID: <kitspace/awesome-electronics/pull/74@github.com>
+Subject: [kitspace/awesome-electronics] Add Documentation section: Electric
+ Symbols for Inkscape (PR #74)
+Mime-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="--==_mimepart_61bc4ae5c2f8b_24b3c78827469b";
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Precedence: list
+X-GitHub-Sender: gituser789
+X-GitHub-Recipient: someuser
+X-GitHub-Reason: subscribed
+List-ID: kitspace/awesome-electronics
+ <awesome-electronics.kitspace.github.com>
+List-Archive: https://github.com/kitspace/awesome-electronics
+List-Post: <mailto:reply+AAGEWHAHACPER7AITCELUWTTESTOLANCNFSM5KIIPXRQ@reply.github.com>
+List-Unsubscribe: <mailto:unsub+AAGEWHAHACPER7AITCELUWTTESTOLANCNFSM5KIIPXRQ@reply.github.com>,
+ <https://github.com/notifications/unsubscribe/AAGEWHAHACPER7AITCELUWTTESTOLANCNFSM5KIIPXRQ>
+X-Auto-Response-Suppress: All
+X-GitHub-Recipient-Address: test@example.com
+
+
+----==_mimepart_61bc4ae5c2f8b_24b3c78827469b
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+
+You can view, comment on, or merge this pull request online at:
+
+  https://github.com/kitspace/awesome-electronics/pull/74
+
+-- Commit Summary --
+
+  * Add Documentation section: Electric Symbols for Inkscape
+
+-- File Changes --
+
+    M README.md (4)
+
+-- Patch Links --
+
+https://github.com/kitspace/awesome-electronics/pull/74.patch
+https://github.com/kitspace/awesome-electronics/pull/74.diff
+
+-- 
+Reply to this email directly or view it on GitHub:
+https://github.com/kitspace/awesome-electronics/pull/74
+You are receiving this because you are subscribed to this thread.
+
+Message ID: &lt;kitspace/awesome-electronics/pull/74@github.com&gt;
+
+----==_mimepart_61bc4ae5c2f8b_24b3c78827469b
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+
+
+<hr>
+
+<h4>You can view, comment on, or merge this pull request online at:</h4>
+<p>&nbsp;&nbsp;<a href='https://github.com/kitspace/awesome-electronics/pull/74'>https://github.com/kitspace/awesome-electronics/pull/74</a></p>
+
+<h4>Commit Summary</h4>
+<ul>
+  <li><a href="https://github.com/kitspace/awesome-electronics/pull/74/commits/5066adaffefdd45fce0f46b924bd40467211bfe8" class="commit-link">5066ada</a>  Add Documentation section: Electric Symbols for Inkscape</li>
+</ul>
+
+<h4 style="display: inline-block">File Changes </h4> <p style="display: inline-block">(<a href="https://github.com/kitspace/awesome-electronics/pull/74/files">1&nbsp;file</a>)</p>
+<ul>
+  <li>
+    <strong>M</strong>
+    <a href="https://github.com/kitspace/awesome-electronics/pull/74/files#diff-b335630551682c19a781afebcf4d07bf978fb1f8ac04c6bf87428ed5106870f5">README.md</a>
+    (4)
+  </li>
+</ul>
+
+<h4>Patch Links:</h4>
+<ul>
+  <li><a href='https://github.com/kitspace/awesome-electronics/pull/74.patch'>https://github.com/kitspace/awesome-electronics/pull/74.patch</a></li>
+  <li><a href='https://github.com/kitspace/awesome-electronics/pull/74.diff'>https://github.com/kitspace/awesome-electronics/pull/74.diff</a></li>
+</ul>
+
+<p style="font-size:small;-webkit-text-size-adjust:none;color:#666;">&mdash;<br />Reply to this email directly, <a href="https://github.com/kitspace/awesome-electronics/pull/74">view it on GitHub</a>, or <a href="https://github.com/notifications/unsubscribe-auth/AAGEWLTO4EHLW2OYEVSR7GDURLYOLANCNFSM5KIIPXRQ">unsubscribe</a>.<br />You are receiving this because you are subscribed to this thread.<img src="https://github.com/notifications/beacon/AAGEWLQ4V6M47BE5UQXTTFDURLYOLA5CNFSM5KIIPXR2YY3PNVWWK3TUL52HS4DFUVEXG43VMWVGG33NNVSW45C7NFSM4QENNFKQ.gif" height="1" width="1" alt="" /><span style="color: transparent; font-size: 0; display: none; visibility: hidden; overflow: hidden; opacity: 0; width: 0; height: 0; max-width: 0; max-height: 0; mso-hide: all">Message ID: <span>&lt;kitspace/awesome-electronics/pull/74</span><span>@</span><span>github</span><span>.</span><span>com&gt;</span></span></p>
+<script type="application/ld+json">[
+{
+"@context": "http://schema.org",
+"@type": "EmailMessage",
+"potentialAction": {
+"@type": "ViewAction",
+"target": "https://github.com/kitspace/awesome-electronics/pull/74",
+"url": "https://github.com/kitspace/awesome-electronics/pull/74",
+"name": "View Pull Request"
+},
+"description": "View this Pull Request on GitHub",
+"publisher": {
+"@type": "Organization",
+"name": "GitHub",
+"url": "https://github.com"
+}
+}
+]</script>
+
+----==_mimepart_61bc4ae5c2f8b_24b3c78827469b--

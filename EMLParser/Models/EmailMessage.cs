@@ -118,9 +118,18 @@ namespace EMLParser.Models {
 			string line;
 
 			// Check if we've finished reading the bodies and ignore boundaries.
-			line = reader.ReadLine();
-			if (line == null)
+			switch (reader.Peek()) {
+			case -1:
+				// Parsing has ended.
 				return null;
+			case (int)'-':
+				// Ignore the boundary line.
+				line = reader.ReadLine();
+				break;
+			default:
+				// Looks like we are about to parse a header.
+				break;
+			}
 
 			// Parse the headers first.
 			EmailHeader header;

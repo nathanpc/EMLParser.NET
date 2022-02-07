@@ -33,7 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="EMLParser.cs" />
     <Compile Include="Models\EmailBody.cs" />
     <Compile Include="Models\EmailHeader.cs" />
     <Compile Include="Models\EmailMessage.cs" />

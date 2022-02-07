@@ -24,9 +24,8 @@ namespace EMLExample {
 			if (args.Length > 1)
 				emlPath = args[1];
 
-			// Get the contents of the included example EML file and parse it.
-			string contents = File.ReadAllText(emlPath);
-			EmailMessage msg = new EmailMessage(contents);
+			// Parse our example EML file.
+			EmailMessage msg = EMLParser.EMLParser.ParseFile(emlPath);
 
 			// Print the parsed headers.
 			Console.WriteLine("=============== BEGIN HEADERS ===============");

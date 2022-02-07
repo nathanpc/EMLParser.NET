@@ -18,6 +18,7 @@ namespace EMLParser.Models {
 		public EmailMessage() {
 			// Initializes some of our internal variables.
 			Headers = new List<EmailHeader>();
+			Bodies = new List<EmailBody>();
 		}
 
 		/// <summary>
@@ -35,6 +36,7 @@ namespace EMLParser.Models {
 		protected void ParseEML(string eml) {
 			StringReader reader = new StringReader(eml);
 			EmailHeader header;
+			EmailBody body;
 			string line;
 
 			// Parse the headers first.
@@ -51,25 +53,28 @@ namespace EMLParser.Models {
 					}
 
 					// Get the boundary string.
-					boundary = header.Fields["boundary"];
+					SetBoundary(header.Fields["boundary"]);
 				}
 			}
 
 			// Read the empty line after the headers.
 			line = reader.ReadLine();
 			if (line.Length > 0)
-				throw new Exception("Header-Body separator line has contents");
+				throw new Exception("Header/Body separator line has contents");
 
-			// TODO: Check for a boundary before parsing the bodies.
+			// Parse the bodies of the message.
+			while ((body = ParseBody(reader)) != null) {
+				// Add the parsed body to the bodies list.
+				Bodies.Add(body);
+			}
 		}
 
 		/// <summary>
 		/// Parses a header using an <see cref="StringReader"/>.
 		/// </summary>
 		/// <param name="reader">Reader of the EML contents.</param>
-		/// <returns>Parsed header as a <c>string[]</c> where item 0 is the name
-		/// of the header and item 1 is its value. Will return <c>null</c> if it
-		/// has finished parsing the headers.</returns>
+		/// <returns>Parsed header. Will return <c>null</c> if it has
+		/// finished parsing the headers.</returns>
 		private EmailHeader ParseHeader(StringReader reader) {
 			string line;
 			EmailHeader header;
@@ -100,6 +105,55 @@ namespace EMLParser.Models {
 
 			// Looks like we've finished parsing.
 			return header;
+		}
+
+		/// <summary>
+		/// Parses a body using an <see cref="StringReader"/>.
+		/// </summary>
+		/// <param name="reader">Reader of the EML contents.</param>
+		/// <returns>Parsed body. Will return <c>null</c> if it has
+		/// finished parsing the bodies.</returns>
+		private EmailBody ParseBody(StringReader reader) {
+			EmailBody body = new EmailBody();
+			string line;
+
+			// Check if we've finished reading the bodies and ignore boundaries.
+			line = reader.ReadLine();
+			if (line == null)
+				return null;
+
+			// Parse the headers first.
+			EmailHeader header;
+			while ((header = ParseHeader(reader)) != null)
+				body.Headers.Add(header);
+
+			// Read the empty line after the headers.
+			line = reader.ReadLine();
+			if (line.Length > 0)
+				throw new Exception("Body header/body separator line has contents");
+
+			// Go through the lines until we reach the boundary.
+			while ((line = reader.ReadLine()) != boundary) {
+				// Check if we've finished reading the file just to be sure.
+				if (line == null) {
+					break;
+				} else if (line == boundary + "--") {
+					break;
+				}
+
+				// Append line to the message body.
+				body.AppendLine(line);
+			}
+
+			return body;
+		}
+
+		/// <summary>
+		/// Sets the boundary and automatically prepends the double dash to it.
+		/// </summary>
+		/// <param name="boundary">Boundary string.</param>
+		protected void SetBoundary(string boundary) {
+			this.boundary = "--" + boundary;
 		}
 
 		/// <summary>

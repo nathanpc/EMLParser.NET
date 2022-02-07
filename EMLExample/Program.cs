@@ -45,6 +45,13 @@ namespace EMLExample {
 			}
 			Console.WriteLine("=============== END HEADERS ===============");
 
+			// Print bodies.
+			foreach (EmailBody body in msg.Bodies) {
+				Console.WriteLine("=============== BEGIN BODY ===============");
+				Console.Write(body.Contents);
+				Console.WriteLine("=============== END BODY ===============");
+			}
+
 			// Conviniently wait for the user to look at things.
 			Console.Write("Press any key to continue...");
 			Console.Read();

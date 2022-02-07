@@ -46,9 +46,11 @@ namespace EMLExample {
 
 			// Print bodies.
 			foreach (EmailBody body in msg.Bodies) {
-				Console.WriteLine("=============== BEGIN BODY ===============");
+				Console.WriteLine("========== BEGIN BODY ({0}) ==========",
+					body.ContentType);
 				Console.Write(body.Contents);
-				Console.WriteLine("=============== END BODY ===============");
+				Console.WriteLine("========== END BODY ({0}) ==========",
+					body.ContentType);
 			}
 
 			// Conviniently wait for the user to look at things.

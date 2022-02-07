@@ -9,6 +9,7 @@ namespace EMLParser.Models {
 	public class EmailBody {
 		private List<EmailHeader> _headers;
 		private string _contents;
+		private string _contentType;
 
 		/// <summary>
 		/// Creates an empty email body object.
@@ -17,6 +18,7 @@ namespace EMLParser.Models {
 			// Set some things up.
 			Headers = new List<EmailHeader>();
 			Contents = "";
+			ContentType = null;
 		}
 
 		/// <summary>
@@ -43,6 +45,28 @@ namespace EMLParser.Models {
 			Contents += line + Environment.NewLine;
 		}
 
+		/// <summary>
+		/// Gets the content type MIME string and puts it into the ContentType
+		/// property.
+		/// </summary>
+		protected void GetContentType() {
+			// Do nothing if the ContentType property has already been set.
+			if (_contentType != null)
+				return;
+
+			// Go through the headers looking for the Content-Type.
+			foreach (EmailHeader header in Headers) {
+				// Is this it?
+				if (header.Name != "Content-Type")
+					continue;
+
+				// Get the MIME string.
+				ContentType = header.Value.Split(new char[] { ';' }, 2,
+					StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+				return;
+			}
+		}
+
 		public override string ToString() {
 			return Contents;
 		}
@@ -61,6 +85,14 @@ namespace EMLParser.Models {
 		public string Contents {
 			get { return _contents; }
 			set { _contents = value; }
+		}
+
+		/// <summary>
+		/// Message content type MIME string.
+		/// </summary>
+		public string ContentType {
+			get { GetContentType(); return _contentType; }
+			set { _contentType = value; }
 		}
 	}
 }

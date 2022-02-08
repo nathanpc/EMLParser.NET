@@ -9,6 +9,7 @@ namespace EMLParser.Models {
 	/// </summary>
 	public class EmailMessage {
 		protected string boundary = "";
+		protected bool finishedParsing = false;
 		private List<EmailHeader> _headers;
 		private List<EmailBody> _bodies;
 
@@ -58,11 +59,11 @@ namespace EMLParser.Models {
 			}
 
 			// Read the empty line after the headers.
-			if (IsNextCharWhitespace(reader))
+			if (IsNextCharCR(reader))
 				line = reader.ReadLine();
 
 			// Parse the bodies of the message.
-			while ((body = ParseBody(reader)) != null) {
+			while (!finishedParsing && ((body = ParseBody(reader)) != null)) {
 				// Add the parsed body to the bodies list.
 				Bodies.Add(body);
 			}
@@ -136,15 +137,17 @@ namespace EMLParser.Models {
 				body.Headers.Add(header);
 
 			// Read the empty line after the headers.
-			if (IsNextCharWhitespace(reader))
+			if (IsNextCharCR(reader))
 				line = reader.ReadLine();
 
 			// Go through the lines until we reach the boundary.
 			while ((line = reader.ReadLine()) != boundary) {
 				// Check if we've finished reading the file just to be sure.
 				if (line == null) {
+					finishedParsing = true;
 					break;
-				} else if (line == boundary + "--") {
+				} else if (line == (boundary + "--")) {
+					finishedParsing = true;
 					break;
 				}
 
@@ -172,6 +175,16 @@ namespace EMLParser.Models {
 		protected bool IsNextCharWhitespace(StringReader reader) {
 			int c = reader.Peek();
 			return (c == (int)' ') || (c == (int)'\t');
+		}
+
+		/// <summary>
+		/// Checks if the next character in the <see cref="StringReader"/> is
+		/// a Carriage-Return without advancing the pointer.
+		/// </summary>
+		/// <param name="reader">Reader being used.</param>
+		/// <returns>True if the next character to be read is a CR.</returns>
+		protected bool IsNextCharCR(StringReader reader) {
+			return reader.Peek() == (int)'\r';
 		}
 
 		/// <summary>
